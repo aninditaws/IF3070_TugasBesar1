@@ -1,8 +1,9 @@
 from cube.magic_cube import MagicCube
-from cube.obj_function import ObjectiveFunction
+from cube.magic_cube import MagicCube
+from algorithms.steepest_hill_climbing import SteepestHillClimbing
 
 magic_cube = MagicCube(size=5)
-objective_func = ObjectiveFunction(magic_cube)
-print("MN:", objective_func.calculate_magic_number())
-print("Initial objective score:", objective_func.objective_function(), "\n")
-magic_cube.display()
+print("Magic number:", magic_cube.magic_number)
+print("Initial objective score:", magic_cube.heuristic_value())
+hill_climber = SteepestHillClimbing(magic_cube)
+hill_climber.run(max_iterations=10)
