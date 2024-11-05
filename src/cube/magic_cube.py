@@ -21,7 +21,7 @@ class MagicCube:
     def calculate_magic_number(self):
         return (self.size * (self.size ** 3 + 1)) // 2
 
-    def heuristic_value(self):
+    def objective_function(self):
         score = 0
         
         # Check sums of rows, columns, and pillars for each layer
