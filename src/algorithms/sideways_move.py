@@ -43,7 +43,7 @@ class SidewaysMove:
 
     def run(self, max_iterations=1000, max_sideways_iteration=100):
         """Runs the algorithm with a limit on sideways moves."""
-        start_time = time.time()
+        start_time = time.perf_counter()
         iteration = 0
         sideways_iteration = 0
 
@@ -70,20 +70,22 @@ class SidewaysMove:
 
         # Record the final score and stop timing
         self.scores.append(self.best_score)
-        end_time = time.time()
+        end_time = time.perf_counter()
         duration = end_time - start_time
 
         # Plot the objective score progression
         self.plot_scores(iteration)
 
         print(f"Final score after {iteration} iterations: {self.best_score}")
-        print(f"Duration of the search process: {duration:.2f} seconds")
+        print(f"Duration of the search process: {duration:.4f} seconds")
         return self.best_score
 
     def plot_scores(self, iteration):
+        # plt.gcf().canvas.manager.set_window_title("Hill-Climbing with Sideways Move Progression")
         plt.figure(figsize=(10, 6))
         plt.plot(range(iteration + 1), self.scores, marker='o', color='b', label="Objective Function Value")
-        plt.title("Objective Function Value over Iterations")
+        plt.xticks(range(0, iteration + 1, 1))
+        plt.title("Hill-Climbing with Sideways Move Progression")
         plt.xlabel("Iteration")
         plt.ylabel("Objective Function Value")
         plt.legend()

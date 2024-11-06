@@ -39,7 +39,7 @@ class SteepestHillClimbing:
         return best_positions, best_delta
 
     def run(self, max_iterations=1000):
-        start_time = time.time()
+        start_time = time.perf_counter()
         iteration = 0
 
         while iteration < max_iterations:
@@ -61,22 +61,27 @@ class SteepestHillClimbing:
             # print(f"Iteration {iteration}: Score = {self.best_score}")
 
         self.scores.append(self.best_score)
-        end_time = time.time()
+        end_time = time.perf_counter()
         duration = end_time - start_time
 
         # Plot the objective score progression
         self.plot_scores(iteration)
 
         print(f"Final score after {iteration} iterations: {self.best_score}")
-        print(f"Duration of the search process: {duration:.2f} seconds")
+        print(f"Duration of the search process: {duration:.4f} seconds")
         return self.best_score
 
     def plot_scores(self, iteration):
+        # plt.gcf().canvas.manager.set_window_title("Steepest Ascent Hill-Climbing Progression")
         plt.figure(figsize=(10, 6))
         plt.plot(range(iteration + 1), self.scores, marker='o', color='b', label="Objective Function Value")
-        plt.title("Objective Function Value over Iterations")
+        plt.xticks(range(0, iteration + 1, 1))
+        plt.title("Steepest Ascent Hill-Climbing Progression")
         plt.xlabel("Iteration")
         plt.ylabel("Objective Function Value")
         plt.legend()
         plt.grid(True)
         plt.show()
+
+        # Set x-axis ticks at specified intervals
+        # plt.xticks(range(0, iteration + 1, x_tick_interval))
