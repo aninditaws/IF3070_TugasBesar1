@@ -1,10 +1,10 @@
 import sys
 import time
-import matplotlib.pyplot as plt
 from cube.magic_cube import MagicCube
 from algorithms.steepest_hill_climbing import SteepestHillClimbing
 from algorithms.sideways_move import SidewaysMove
 from algorithms.stochastic import StochasticHillClimbing
+from algorithms.genetic_algorithm import GeneticAlgorithmMagicCube
 
 size = 5
 max_iterations = 1000
@@ -69,6 +69,23 @@ algorithms.append(
         "delta": stochastic_initial_score - stochastic_final_score,
         "duration": stochastic_duration,
         "iteration": stochastic_iteration
+    }
+)
+
+print("\n=== Running Genetic Algorithm ===")
+population_size = int(input("Enter Population Size: "))
+generations = int(input("Enter Number of Generations: "))
+genetic_algorithm = GeneticAlgorithmMagicCube(population_size=population_size, mutation_rate=0.1, generations=generations)
+genetic_initial_score, genetic_final_score, duration = genetic_algorithm.run()
+
+algorithms.append(
+    {
+        "algorithm": "Genetic Algorithm",
+        "initial_score": genetic_initial_score,
+        "final_score": genetic_final_score,
+        "delta": genetic_initial_score - genetic_final_score,
+        "duration": duration,
+        "iteration": generations
     }
 )
 
