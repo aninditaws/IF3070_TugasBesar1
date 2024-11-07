@@ -36,6 +36,7 @@ class SteepestHillClimbing:
 
     def run(self, max_iterations=1000):
         start_time = time.perf_counter()
+        last_best_delta = 0
         iteration = 0
 
         self.scores.append(self.cube.objective_function())
@@ -43,11 +44,13 @@ class SteepestHillClimbing:
         while iteration < max_iterations:
             best_positions, best_delta = self.find_best_neighbor()
 
-            if best_delta == 0:
+            if best_delta == last_best_delta:
                 break
 
             self.swap_elements(*best_positions)
             self.scores.append(self.cube.objective_function())
+            print(f"Iteration {iteration}: objective score {self.cube.objective_function()}, best delta: {best_delta}\n")
+            last_best_delta = best_delta
             iteration += 1
 
         final_score = self.cube.objective_function()

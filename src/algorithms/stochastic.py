@@ -52,7 +52,6 @@ class StochasticHillClimbing:
         return final_score, duration
 
     def plot_scores(self, iteration):
-        # plt.gcf().canvas.manager.set_window_title("Stochastic Hill-Climbing Progression")
         plt.figure(figsize=(10, 6))
         plt.plot(range(iteration + 1), self.scores, marker='o', color='b', label="Objective Function Value")
         plt.xticks(range(0, iteration + 1, 1))

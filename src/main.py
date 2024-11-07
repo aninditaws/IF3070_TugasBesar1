@@ -4,15 +4,15 @@ from algorithms.sideways_move import SidewaysMove
 from algorithms.stochastic import StochasticHillClimbing
 
 size = 5
-max_iterations = 20
-max_sideways_iteration = 10
+max_iterations = 1000
+max_sideways_iteration = 5
 
 algorithms = []
 
 print("\n=== Running Steepest Hill Climbing ===")
 magic_cube = MagicCube(size)
 steepest_initial_score = magic_cube.objective_function()
-print("\nFirst state of magic cube:")
+print("First state of magic cube:")
 magic_cube.display()
 steepest_hill = SteepestHillClimbing(magic_cube)
 steepest_final_score, steepest_move_duration = steepest_hill.run(max_iterations)
@@ -31,7 +31,7 @@ algorithms.append(
 print("\n=== Running Sideways Move Hill Climbing ===")
 magic_cube = MagicCube(size)
 sideways_initial_score = magic_cube.objective_function()
-print("\nFirst state of magic cube:")
+print("First state of magic cube:")
 magic_cube.display()
 sideways_climber = SidewaysMove(magic_cube)
 sideways_final_score, sideways_move_duration = sideways_climber.run(max_iterations, max_sideways_iteration)
@@ -50,7 +50,7 @@ algorithms.append(
 print("\n=== Running Stochastic Hill Climbing ===")
 magic_cube = MagicCube(size)
 stochastic_initial_score = magic_cube.objective_function()
-print("\nFirst state of magic cube:")
+print("First state of magic cube:")
 magic_cube.display()
 stochastic_climber = StochasticHillClimbing(magic_cube)
 stochastic_final_score, stochastic_duration = stochastic_climber.run(max_iterations)
@@ -75,7 +75,9 @@ for algo in algorithms:
     print(f"Initial Score: {algo['initial_score']}")
     print(f"Final Score: {algo['final_score']}")
     print(f"Delta: {algo['delta']}")
-    print(f"Duration: {algo['duration']} seconds")
+    print(f"Duration: {algo['duration']:.4f} seconds")
+
+print("\n" + "-" * 50)
 
 print("\n=== Algorithm with the Largest Improvement ===")
 print(f"Algorithm: {best_algorithm_delta['algorithm']}")
@@ -84,4 +86,4 @@ print(f"Final Score: {best_algorithm_delta['final_score']}")
 
 print("\n=== Algorithm with the Fastest Duration ===")
 print(f"Algorithm: {best_algorithm_duration['algorithm']}")
-print(f"Duration: {best_algorithm_duration['duration']} seconds")
+print(f"Duration: {best_algorithm_duration['duration']:.4f} seconds")

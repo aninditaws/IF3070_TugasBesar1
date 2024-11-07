@@ -14,10 +14,9 @@ class SidewaysMove:
         x2, y2, z2 = pos2
         self.cube.cube[x1][y1][z1], self.cube.cube[x2][y2][z2] = self.cube.cube[x2][y2][z2], self.cube.cube[x1][y1][z1]
 
-    def find_best_neighbor(self, max_sideways_iteration=100):
+    def find_best_neighbor(self):
         delta = 0
         best_delta = 0
-        sideways_iteration = 0
 
         positions = [(x, y, z) for x in range (self.cube.size) for y in range (self.cube.size) for z in range (self.cube.size)]
         for pos1 in positions:
@@ -27,33 +26,37 @@ class SidewaysMove:
                     new_score = self.cube.objective_function()
                     delta = self.best_score - new_score
 
-                    if delta > best_delta:
+                    if delta >= best_delta:
                         best_delta = delta
                         best_positions = (pos1, pos2)
-                    elif delta == best_delta and sideways_iteration < max_sideways_iteration:
-                        best_positions = (pos1, pos2)
-                        sideways_iteration += 1
-                    elif delta == best_delta and sideways_iteration >= max_sideways_iteration:
-                        break
 
                     self.swap_elements(pos1, pos2)
-            
-            if delta == best_delta and sideways_iteration >= max_sideways_iteration:
-                break
 
-        return best_positions
+        return best_positions, best_delta
 
     def run(self, max_iterations=1000, max_sideways_iteration=100):
         start_time = time.perf_counter()
+        last_best_delta = 0
         iteration = 0
+        sideways_iteration = 0
 
         self.scores.append(self.cube.objective_function())
 
         while iteration < max_iterations:
-            best_positions = self.find_best_neighbor()
+            best_positions, best_delta = self.find_best_neighbor()
+
+            if best_delta == last_best_delta:
+                sideways_iteration += 1
+            else:
+                sideways_iteration = 0
+                
+            if sideways_iteration >= max_sideways_iteration:
+                break
 
             self.swap_elements(*best_positions)
             self.scores.append(self.cube.objective_function())
+            print(f"Iteration {iteration}: objective score {self.cube.objective_function()}\n")
+            last_best_delta = best_delta
             iteration += 1
 
         final_score = self.cube.objective_function()
