@@ -49,7 +49,7 @@ class StochasticHillClimbing:
         duration = end_time - start_time
         self.plot_scores(iteration)
 
-        return final_score, duration
+        return final_score, duration, iteration
 
     def plot_scores(self, iteration):
         plt.figure(figsize=(10, 6))

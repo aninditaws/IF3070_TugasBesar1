@@ -55,7 +55,7 @@ class SidewaysMove:
 
             self.swap_elements(*best_positions)
             self.scores.append(self.cube.objective_function())
-            print(f"Iteration {iteration}: objective score {self.cube.objective_function()}\n")
+            # print(f"Iteration {iteration}: objective score {self.cube.objective_function()}\n")
             last_best_delta = best_delta
             iteration += 1
 
@@ -64,7 +64,7 @@ class SidewaysMove:
         duration = end_time - start_time
         self.plot_scores(iteration)
 
-        return final_score, duration
+        return final_score, duration, iteration
 
     def plot_scores(self, iteration):
         plt.figure(figsize=(10, 6))
