@@ -18,7 +18,7 @@ steepest_initial_score = magic_cube.objective_function()
 print("First state of magic cube:")
 magic_cube.display()
 steepest_hill = SteepestHillClimbing(magic_cube)
-steepest_final_score, steepest_move_duration = steepest_hill.run(max_iterations)
+steepest_final_score, steepest_move_duration, steepest_move_iteration = steepest_hill.run(max_iterations)
 print("\nState of magic cube after Steepest Hill Climbing:")
 magic_cube.display()
 algorithms.append(
@@ -27,7 +27,8 @@ algorithms.append(
         "initial_score": steepest_initial_score,
         "final_score": steepest_final_score,
         "delta": steepest_initial_score - steepest_final_score,
-        "duration": steepest_move_duration
+        "duration": steepest_move_duration,
+        "iteration": steepest_move_iteration
     }
 )
 
@@ -37,7 +38,7 @@ sideways_initial_score = magic_cube.objective_function()
 print("First state of magic cube:")
 magic_cube.display()
 sideways_climber = SidewaysMove(magic_cube)
-sideways_final_score, sideways_move_duration = sideways_climber.run(max_iterations, max_sideways_iteration)
+sideways_final_score, sideways_move_duration, sideways_move_iteration = sideways_climber.run(max_iterations, max_sideways_iteration)
 print("\nState of magic cube after Sideways Move Hill Climbing:")
 magic_cube.display()
 algorithms.append(
@@ -46,7 +47,8 @@ algorithms.append(
         "initial_score": sideways_initial_score,
         "final_score": sideways_final_score,
         "delta": sideways_initial_score - sideways_final_score,
-        "duration": sideways_move_duration
+        "duration": sideways_move_duration,
+        "iteration": sideways_move_iteration
     }
 )
 
@@ -56,7 +58,7 @@ stochastic_initial_score = magic_cube.objective_function()
 print("First state of magic cube:")
 magic_cube.display()
 stochastic_climber = StochasticHillClimbing(magic_cube)
-stochastic_final_score, stochastic_duration = stochastic_climber.run(max_iterations)
+stochastic_final_score, stochastic_duration, stochastic_iteration = stochastic_climber.run(max_iterations)
 print("\nState of magic cube after Stochastic Hill Climbing:")
 magic_cube.display()
 algorithms.append(
@@ -65,7 +67,8 @@ algorithms.append(
         "initial_score": stochastic_initial_score,
         "final_score": stochastic_final_score,
         "delta": stochastic_initial_score - stochastic_final_score,
-        "duration": stochastic_duration
+        "duration": stochastic_duration,
+        "iteration": stochastic_iteration
     }
 )
 
@@ -79,6 +82,7 @@ for algo in algorithms:
     print(f"Final Score: {algo['final_score']}")
     print(f"Delta: {algo['delta']}")
     print(f"Duration: {algo['duration']:.4f} seconds")
+    print(f"Iteration: {algo['iteration']}")
 
 print("\n" + "-" * 50)
 
