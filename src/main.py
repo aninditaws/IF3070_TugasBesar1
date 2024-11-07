@@ -1,3 +1,6 @@
+import sys
+import time
+import matplotlib.pyplot as plt
 from cube.magic_cube import MagicCube
 from algorithms.steepest_hill_climbing import SteepestHillClimbing
 from algorithms.sideways_move import SidewaysMove
