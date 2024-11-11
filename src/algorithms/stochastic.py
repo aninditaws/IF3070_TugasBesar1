@@ -4,16 +4,19 @@ import matplotlib.pyplot as plt
 from cube.magic_cube import MagicCube
 
 class StochasticHillClimbing:
+    # Fungsi untuk menyimpan informasi inisialisasi kubus untuk digunakan pada algoritma ini
     def __init__(self, cube):
         self.cube = cube
         self.best_score = self.cube.objective_function()
         self.scores = []
 
+    # Fungsi untuk menukar dua elemen dalam kubus
     def swap_elements(self, pos1, pos2):
         x1, y1, z1 = pos1
         x2, y2, z2 = pos2
         self.cube.cube[x1][y1][z1], self.cube.cube[x2][y2][z2] = self.cube.cube[x2][y2][z2], self.cube.cube[x1][y1][z1]
 
+    # Fungsi untuk mencari state neighbour secara random
     def find_random_neighbor(self, best_delta):
         pos1 = (random.randint(0, self.cube.size - 1), random.randint(0, self.cube.size - 1), random.randint(0, self.cube.size - 1))
         pos2 = (random.randint(0, self.cube.size - 1), random.randint(0, self.cube.size - 1), random.randint(0, self.cube.size - 1))
@@ -31,7 +34,7 @@ class StochasticHillClimbing:
 
         return best_delta
         
-
+    # Fungsi untuk menjalankan algoritma stochastic
     def run(self, max_iterations=1000):
         start_time = time.perf_counter()
         best_delta = 0
@@ -51,6 +54,7 @@ class StochasticHillClimbing:
 
         return final_score, duration, iteration
 
+    # Fungsi untuk membuat plot diagram 
     def plot_scores(self, iteration):
         plt.figure(figsize=(10, 6))
         plt.plot(range(iteration + 1), self.scores, marker='o', color='b', label="Objective Function Value")

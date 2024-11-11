@@ -4,16 +4,19 @@ import matplotlib.pyplot as plt
 from cube.magic_cube import MagicCube
 
 class SteepestHillClimbing:
+    # Fungsi untuk menyimpan informasi inisialisasi kubus untuk digunakan pada algoritma ini
     def __init__(self, cube):
         self.cube = cube
         self.best_score = self.cube.objective_function()
         self.scores = []
 
+    # Fungsi untuk menukar dua elemen dalam kubus
     def swap_elements(self, pos1, pos2):
         x1, y1, z1 = pos1
         x2, y2, z2 = pos2
         self.cube.cube[x1][y1][z1], self.cube.cube[x2][y2][z2] = self.cube.cube[x2][y2][z2], self.cube.cube[x1][y1][z1]
 
+    # Fungsi untuk mencari state neighbour yang terbaik
     def find_best_neighbor(self):
         delta = 0
         best_delta = 0
@@ -34,9 +37,10 @@ class SteepestHillClimbing:
 
         return best_positions, best_delta
 
+    # Fungsi untuk menjalankan algoritma sideways
     def run(self, max_iterations=1000):
         start_time = time.perf_counter()
-        last_best_delta = 0
+        last_best_delta = 0     
         iteration = 0
 
         self.scores.append(self.cube.objective_function())
@@ -44,7 +48,7 @@ class SteepestHillClimbing:
         while iteration < max_iterations:
             best_positions, best_delta = self.find_best_neighbor()
 
-            if best_delta == last_best_delta:
+            if best_delta == last_best_delta:       # kondisi untuk memberhentikan algoritma jika ditemukan plateu 
                 break
 
             self.swap_elements(*best_positions)
@@ -60,6 +64,7 @@ class SteepestHillClimbing:
 
         return final_score, duration, iteration
 
+    # Fungsi untuk membuat plot diagram 
     def plot_scores(self, iteration):
         plt.figure(figsize=(10, 6))
         plt.plot(range(iteration + 1), self.scores, marker='o', color='b', label="Objective Function Value")
