@@ -1,23 +1,24 @@
 import random
+import time
+import matplotlib.pyplot as plt
 from typing import List
 from cube.magic_cube import MagicCube
 
-
 class GeneticAlgorithmMagicCube:
-    def __init__(self, population_size=50, mutation_rate=0.1, generations=200, best_individuals=2, restart_interval=50):
+    def __init__(self, population_size=50, mutation_rate=0.1, iterations=200, best_individuals=2, restart_interval=50):
         """
         Inisialisasi algoritma genetika dengan parameter yang diberikan.
 
         Parameters:
         - population_size: Jumlah individu dalam populasi
         - mutation_rate: Tingkat mutasi yang diterapkan pada setiap individu
-        - generations: Jumlah maksimum generasi untuk dijalankan
+        - iterations: Jumlah maksimum generasi untuk dijalankan
         - best_individuals: Jumlah individu terbaik yang dipertahankan setiap generasi
         - restart_interval: Interval generasi untuk melakukan restart populasi parsial
         """
         self.population_size = population_size
         self.mutation_rate = mutation_rate
-        self.generations = generations
+        self.iterations = iterations
         self.best_individuals = best_individuals
         self.restart_interval = restart_interval
         self.population = self.startInit()  # Inisialisasi populasi awal
@@ -42,7 +43,7 @@ class GeneticAlgorithmMagicCube:
         Returns:
         float: Nilai skor evaluasi; semakin rendah semakin baik
         """
-        return ObjectiveFunction(state).objective_function()
+        return state.objective_function()
 
     def selectParents(self, population: List[MagicCube]) -> List[MagicCube]:
         """
@@ -122,7 +123,7 @@ class GeneticAlgorithmMagicCube:
         """
         return min(population, key=lambda ind: self.evaluateState(ind))
 
-    def search(self) -> MagicCube:
+    def run(self) -> MagicCube:
         """
                 Menjalankan algoritma genetika untuk mencari solusi optimal.
 
@@ -130,26 +131,37 @@ class GeneticAlgorithmMagicCube:
                 MagicCube: Solusi terbaik yang ditemukan setelah seluruh generasi
         """
         best_score = float('inf')
-        for generation in range(self.generations):
-            if generation % self.restart_interval == 0 and generation > 0:
-                print(f"Restarting a portion of the population at generation {generation}")
-                self.population = self.startInit()[:self.population_size // 2] + self.population[self.population_size // 2:]
+        initial_score = self.population[0].objective_function()
+
+        start_time = time.time()
+        for iteration in range(self.iterations):
+            if iteration % self.restart_interval == 0 and iteration > 0:
+                self.population = self.startInit()[:self.population_size // 2] + self.population[
+                                                                                 self.population_size // 2:]
 
             current_best = self.findBestSolution(self.population)
             current_score = self.evaluateState(current_best)
             self.objective_function_values.append(current_score)
 
-            # Log dan perbarui best_score
-            print(f"Generasi {generation}: Evaluasi terbaik = {current_score}")
             if current_score < best_score:
                 best_score = current_score
-
-            # Penghentian jika mencapai skor optimal (315)
+                print(f"Iteration {iteration}: Best Evaluation = {best_score}")
             if best_score == 315:
-                print("Solusi optimal ditemukan dengan nilai 315.")
-                return current_best
+                print("Optimal solution with score 315 found.")
+                break
 
-            # Perbarui populasi
             self.population = self.generateNextGeneration(self.population)
 
-        return self.findBestSolution(self.population)
+        end_time = time.time()
+
+        # Plot objective function progression
+        plt.figure(figsize=(10, 6))
+        plt.plot(self.objective_function_values, label="Objective Score per Iteration")
+        plt.xlabel("Iteration")
+        plt.ylabel("Objective Score")
+        plt.title(
+            f"Objective Function Progression (Population: {self.population_size}, Iteration: {self.iterations})")
+        plt.legend()
+        plt.show()
+
+        return initial_score, best_score, end_time - start_time
