@@ -2,17 +2,17 @@ import sys
 import time
 from cube.magic_cube import MagicCube
 # from algorithms.steepest_hill_climbing import SteepestHillClimbing
-# from algorithms.sideways_move import SidewaysMove
+from algorithms.sideways_move import SidewaysMove
 # from algorithms.stochastic import StochasticHillClimbing
 from algorithms.random_restart import RandomRestartHillClimbing
 
-# Meminta input jumlah restart dan jumlah iterasi per restart dari pengguna
-max_restarts = int(input("Masukkan jumlah restart: "))
+#Meminta input jumlah restart dan jumlah iterasi per restart dari pengguna
+max_restart = int(input("Masukkan jumlah restart: "))
 max_iterations_per_restart = int(input("Masukkan jumlah iterasi per restart: "))
 
 size = 5
-max_iterations = 1000
-
+max_iterations = 100
+max_sideways_iteration = 1
 
 algorithms = []
 
@@ -70,7 +70,7 @@ magic_cube = MagicCube(size)
 random_restart_initial_score = magic_cube.objective_function()
 print ("First state of magic cube:")
 magic_cube.display()
-random_restart_climber = RandomRestartHillClimbing(magic_cube, max_restarts, max_iterations_per_restart)
+random_restart_climber = RandomRestartHillClimbing(magic_cube, max_restart, max_iterations_per_restart)
 random_restart_final_score, random_restart_duration, random_restart_iteration = random_restart_climber.run()
 
 magic_cube.display()

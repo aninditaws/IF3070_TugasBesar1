@@ -90,7 +90,7 @@ class RandomRestartHillClimbing:
         best_solution_score = 0 #Inisialisasi skor terbaik
         total_iterations = 0 #Inisialisasi total iterasi
         number_restart = 0 #Perhitungan terhadap restart
-
+            
         while number_restart < self.max_restarts:
             print(f"\n=== Restart {number_restart + 1} ===")
             obj_scores = [] #Nilai objektif akan dicatat setiap dilakukan restart
@@ -119,7 +119,6 @@ class RandomRestartHillClimbing:
         overall_duration = end_time - start_time 
 
         self.plot_scores(total_iterations)
-
         return best_solution_score, overall_duration, total_iterations
     
     #Fungsi untuk plotting
