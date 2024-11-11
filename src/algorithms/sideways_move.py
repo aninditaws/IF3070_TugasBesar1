@@ -4,16 +4,19 @@ import matplotlib.pyplot as plt
 from cube.magic_cube import MagicCube
 
 class SidewaysMove:
+    # Fungsi untuk menyimpan informasi inisialisasi kubus untuk digunakan pada algoritma ini
     def __init__(self, cube):
         self.cube = cube
         self.best_score = self.cube.objective_function() 
         self.scores = []
 
+    # Fungsi untuk menukar dua elemen dalam kubus
     def swap_elements(self, pos1, pos2):
         x1, y1, z1 = pos1
         x2, y2, z2 = pos2
         self.cube.cube[x1][y1][z1], self.cube.cube[x2][y2][z2] = self.cube.cube[x2][y2][z2], self.cube.cube[x1][y1][z1]
 
+    # Fungsi untuk mencari state neighbour yang terbaik
     def find_best_neighbor(self):
         delta = 0
         best_delta = 0
@@ -34,10 +37,12 @@ class SidewaysMove:
 
         return best_positions, best_delta
 
+    # Fungsi untuk menjalankan algoritma steepest
     def run(self, max_iterations=1000, max_sideways_iteration=100):
         start_time = time.perf_counter()
         last_best_delta = 0
         iteration = 0
+        most_sideways_iteration = 0
         sideways_iteration = 0
 
         self.scores.append(self.cube.objective_function())
@@ -45,12 +50,15 @@ class SidewaysMove:
         while iteration < max_iterations:
             best_positions, best_delta = self.find_best_neighbor()
 
-            if best_delta == last_best_delta:
+            if best_delta == last_best_delta:                             # kondisi untuk menambahkan jumlah iterasi sideways jika melalui sideways
                 sideways_iteration += 1
-            else:
+                if sideways_iteration > most_sideways_iteration:
+                    most_sideways_iteration = sideways_iteration
+            else:                                                         # kondisi untuk mereset jumlah iterasi sideways jika state algoritma sudah tidak sideways 
                 sideways_iteration = 0
+                most_sideways_iteration = 0
                 
-            if sideways_iteration >= max_sideways_iteration:
+            if sideways_iteration >= max_sideways_iteration:              # kondisi untuk memberhentikan algoritma jika iterasi sideways melebihi batas yang ditentukan 
                 break
 
             self.swap_elements(*best_positions)
@@ -64,8 +72,9 @@ class SidewaysMove:
         duration = end_time - start_time
         self.plot_scores(iteration)
 
-        return final_score, duration, iteration
+        return final_score, duration, iteration, most_sideways_iteration
 
+    # Fungsi untuk membuat plot diagram 
     def plot_scores(self, iteration):
         plt.figure(figsize=(10, 6))
         plt.plot(range(iteration + 1), self.scores, marker='o', color='b', label="Objective Function Value")

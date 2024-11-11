@@ -69,4 +69,4 @@ class MagicCube:
             print(f"Layer {layer + 1}:")
             for element in self.cube[layer]:
                 print(" ".join(f"{num:3}" for num in element))
-            print("-" * 25)
+            print("-" * 20)
