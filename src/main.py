@@ -11,12 +11,6 @@ from algorithms.simulated_annealing import SimulatedAnnealing
 
 # Variabel global
 size = 5
-max_iterations = 1
-max_sideways_iteration = 10
-initial_temp = 1000
-final_temp = 1e-20
-cooling_rate = 0.9999
-threshold = 0.5
 algorithms = []
 
 # Mengosongkan terminal
@@ -42,6 +36,7 @@ def colorText(text, color):
 
 # Fungsi pemanggilan algoritma
 def run_steepest_hill_climbing():
+    max_iterations = int(input("Masukkan jumlah maksimal iterasi yang diinginkan: "))
     magic_cube = MagicCube(size)
     steepest_initial_score = magic_cube.objective_function()
     colorText("First state of magic cube:", LIME_GREEN)
@@ -60,6 +55,8 @@ def run_steepest_hill_climbing():
     })
 
 def run_sideways_move_hill_climbing():
+    max_iterations = int(input("Masukkan jumlah maksimal iterasi yang diinginkan: "))
+    max_sideways_iteration = int(input("Masukkan jumlah maksimal iterasi sideways yang diinginkan: "))
     magic_cube = MagicCube(size)
     sideways_initial_score = magic_cube.objective_function()
     colorText("First state of magic cube:", LIME_GREEN)
@@ -79,6 +76,7 @@ def run_sideways_move_hill_climbing():
     })
 
 def run_stochastic_hill_climbing():
+    max_iterations = int(input("Masukkan jumlah maksimal iterasi yang diinginkan: "))
     magic_cube = MagicCube(size)
     stochastic_initial_score = magic_cube.objective_function()
     colorText("First state of magic cube:", LIME_GREEN)
@@ -97,12 +95,14 @@ def run_stochastic_hill_climbing():
     })
 
 def run_random_restart():
+    max_restart = int(input("Masukkan jumlah restart yang diinginkan: "))
+    max_iterations_per_restart = int(input("Masukkan jumlah maksimal iterasi per restart: "))
     magic_cube = MagicCube(size)
     randomr_initial_score = magic_cube.objective_function()
     colorText("First state of magic cube:", LIME_GREEN)
     magic_cube.display()
-    random_restart = RandomRestartHillClimbing(magic_cube)
-    randomr_final_score, randomr_duration, randomr_restart = random_restart.run(max_restart, max_iteration_per_restart)
+    random_restart = RandomRestartHillClimbing(magic_cube, max_restart, max_iterations_per_restart)
+    randomr_final_score, randomr_duration, randomr_restart = random_restart.run(randomr_initial_score)
     colorText("\nState of magic cube after Random Restart Hill Climbing:", LIME_GREEN)
     magic_cube.display()
     algorithms.append({
@@ -138,6 +138,10 @@ def run_genetic_algorithm():
     )
 
 def run_simulated_annealing():
+    initial_temp = int(input("Masukkan temperatur awal yang diinginkan: "))
+    final_temp = int(input("Masukkan temperatur akhir yang diinginkan: "))
+    cooling_rate = int(input("Masukkan laju penurunan suhu yang diinginkan: "))
+    threshold = int(input("Masukkan nilai threshold yang diinginkan: "))
     magic_cube = MagicCube(size)
     sim_initial_score = magic_cube.objective_function()
     colorText("First state of magic cube:", LIME_GREEN)
@@ -195,7 +199,7 @@ for algon in algo_names:
 
 colorText(f"{i}. Semua Algoritma (Tambahan Info Perbandingan)", LIME_GREEN)
 
-choice = input(TEAL + "Masukkan algoritma yang ingin dicoba (1/2/3/6/7): " + RESET_COLOR)
+choice = input(TEAL + "Masukkan algoritma yang ingin dicoba (1/2/3/4/5/6/7): " + RESET_COLOR)
 
 # Pemilihan algoritma
 if "1" in choice or "7" in choice:
