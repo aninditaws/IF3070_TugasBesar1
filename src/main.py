@@ -139,9 +139,9 @@ def run_genetic_algorithm():
 
 def run_simulated_annealing():
     initial_temp = int(input("Masukkan temperatur awal yang diinginkan: "))
-    final_temp = int(input("Masukkan temperatur akhir yang diinginkan: "))
-    cooling_rate = int(input("Masukkan laju penurunan suhu yang diinginkan: "))
-    threshold = int(input("Masukkan nilai threshold yang diinginkan: "))
+    final_temp = float(input("Masukkan temperatur akhir yang diinginkan: "))
+    cooling_rate = float(input("Masukkan laju penurunan suhu yang diinginkan: "))
+    threshold = float(input("Masukkan nilai threshold yang diinginkan: "))
     magic_cube = MagicCube(size)
     sim_initial_score = magic_cube.objective_function()
     colorText("First state of magic cube:", LIME_GREEN)
