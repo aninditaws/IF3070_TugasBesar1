@@ -5,20 +5,20 @@ from typing import List
 from cube.magic_cube import MagicCube
 
 class GeneticAlgorithmMagicCube:
-    def __init__(self, population_size=50, mutation_rate=0.1, generations=200, best_individuals=2, restart_interval=50):
+    def __init__(self, population_size=50, mutation_rate=0.1, iterations=200, best_individuals=2, restart_interval=50):
         """
         Inisialisasi algoritma genetika dengan parameter yang diberikan.
 
         Parameters:
         - population_size: Jumlah individu dalam populasi
         - mutation_rate: Tingkat mutasi yang diterapkan pada setiap individu
-        - generations: Jumlah maksimum generasi untuk dijalankan
+        - iterations: Jumlah maksimum generasi untuk dijalankan
         - best_individuals: Jumlah individu terbaik yang dipertahankan setiap generasi
         - restart_interval: Interval generasi untuk melakukan restart populasi parsial
         """
         self.population_size = population_size
         self.mutation_rate = mutation_rate
-        self.generations = generations
+        self.iterations = iterations
         self.best_individuals = best_individuals
         self.restart_interval = restart_interval
         self.population = self.startInit()  # Inisialisasi populasi awal
@@ -134,8 +134,8 @@ class GeneticAlgorithmMagicCube:
         initial_score = self.population[0].objective_function()
 
         start_time = time.time()
-        for generation in range(self.generations):
-            if generation % self.restart_interval == 0 and generation > 0:
+        for iteration in range(self.iterations):
+            if iteration % self.restart_interval == 0 and iteration > 0:
                 self.population = self.startInit()[:self.population_size // 2] + self.population[
                                                                                  self.population_size // 2:]
 
@@ -145,7 +145,7 @@ class GeneticAlgorithmMagicCube:
 
             if current_score < best_score:
                 best_score = current_score
-                print(f"Generation {generation}: Best Evaluation = {best_score}")
+                print(f"Iteration {iteration}: Best Evaluation = {best_score}")
             if best_score == 315:
                 print("Optimal solution with score 315 found.")
                 break
@@ -156,11 +156,11 @@ class GeneticAlgorithmMagicCube:
 
         # Plot objective function progression
         plt.figure(figsize=(10, 6))
-        plt.plot(self.objective_function_values, label="Objective Score per Generation")
-        plt.xlabel("Generation")
+        plt.plot(self.objective_function_values, label="Objective Score per Iteration")
+        plt.xlabel("Iteration")
         plt.ylabel("Objective Score")
         plt.title(
-            f"Objective Function Progression (Population: {self.population_size}, Generations: {self.generations})")
+            f"Objective Function Progression (Population: {self.population_size}, Iteration: {self.iterations})")
         plt.legend()
         plt.show()
 

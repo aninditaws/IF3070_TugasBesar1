@@ -72,12 +72,28 @@ algorithms.append(
     }
 )
 
+# Genetic Algorithm
 print("\n=== Running Genetic Algorithm ===")
+
+# Inisialisasi Magic Cube
+magic_cube = MagicCube(5)
 population_size = int(input("Enter Population Size: "))
-generations = int(input("Enter Number of Generations: "))
-genetic_algorithm = GeneticAlgorithmMagicCube(population_size=population_size, mutation_rate=0.1, generations=generations)
+iteration = int(input("Enter Number of Iterations: "))
+genetic_algorithm = GeneticAlgorithmMagicCube(population_size=population_size, mutation_rate=0.1, iterations=iteration)
+
+# State Awal Magic Cube
+print("First state of magic cube:")
+magic_cube.display()
+
+# Algoritma Genetic Algorithm
 genetic_initial_score, genetic_final_score, duration = genetic_algorithm.run()
 
+# State Akhir Magic Cube
+print("\nState of magic cube after Genetic Algorithm:")
+magic_cube.display()
+print(f"Duration: {duration} seconds")
+
+# Data Genetic Algorithm
 algorithms.append(
     {
         "algorithm": "Genetic Algorithm",
@@ -85,7 +101,7 @@ algorithms.append(
         "final_score": genetic_final_score,
         "delta": genetic_initial_score - genetic_final_score,
         "duration": duration,
-        "iteration": generations
+        "iteration": iteration
     }
 )
 
