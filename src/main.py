@@ -1,11 +1,23 @@
 import sys
 import os
-import time
 import matplotlib.pyplot as plt
 from cube.magic_cube import MagicCube
 from algorithms.steepest_hill_climbing import SteepestHillClimbing
 from algorithms.sideways_move import SidewaysMove
 from algorithms.stochastic import StochasticHillClimbing
+from algorithms.random_restart import RandomRestartHillClimbing
+from algorithms.genetic_algorithm import GeneticAlgorithmMagicCube
+from algorithms.simulated_annealing import SimulatedAnnealing
+
+# Variabel global
+size = 5
+max_iterations = 1
+max_sideways_iteration = 10
+initial_temp = 1000
+final_temp = 1e-20
+cooling_rate = 0.9999
+threshold = 0.5
+algorithms = []
 
 # Mengosongkan terminal
 def clear_screen():
@@ -84,6 +96,68 @@ def run_stochastic_hill_climbing():
         "iteration": stochastic_iteration
     })
 
+def run_random_restart():
+    magic_cube = MagicCube(size)
+    randomr_initial_score = magic_cube.objective_function()
+    colorText("First state of magic cube:", LIME_GREEN)
+    magic_cube.display()
+    random_restart = RandomRestartHillClimbing(magic_cube)
+    randomr_final_score, randomr_duration, randomr_restart = random_restart.run(max_restart, max_iteration_per_restart)
+    colorText("\nState of magic cube after Random Restart Hill Climbing:", LIME_GREEN)
+    magic_cube.display()
+    algorithms.append({
+        "algorithm": "Random Restart Hill Climbing",
+        "initial_score": randomr_initial_score,
+        "final_score": randomr_final_score,
+        "delta": randomr_initial_score - randomr_final_score,
+        "duration": randomr_duration,
+        "iteration": randomr_restart
+    })
+
+def run_genetic_algorithm():
+    magic_cube = MagicCube(size)
+    population_size = int(input("Enter Population Size: "))
+    iteration = int(input("Enter Number of Iterations: "))
+    genetic_algorithm = GeneticAlgorithmMagicCube(population_size=population_size, mutation_rate=0.1,
+                                                  iterations=iteration)
+    colorText("First state of magic cube:", LIME_GREEN)
+    magic_cube.display()
+    genetic_initial_score, genetic_final_score, duration = genetic_algorithm.run()
+    colorText("\nState of magic cube after Genetic Algorithm:", LIME_GREEN)
+    magic_cube.display()
+    algorithms.append(
+        {
+            "algorithm": "Genetic Algorithm",
+            "initial_score": genetic_initial_score,
+            "final_score": genetic_final_score,
+            "delta": genetic_initial_score - genetic_final_score,
+            "duration": duration,
+            "population": population_size,
+            "iteration": iteration
+        }
+    )
+
+def run_simulated_annealing():
+    magic_cube = MagicCube(size)
+    sim_initial_score = magic_cube.objective_function()
+    colorText("First state of magic cube:", LIME_GREEN)
+    magic_cube.display()
+    simulated_annealing = SimulatedAnnealing(magic_cube, initial_temp, final_temp, cooling_rate, threshold)
+    sim_final_score, sim_duration, stuck_frequency, sim_iteration = simulated_annealing.run()
+    colorText("\nState of magic cube after Simulated Annealing Algorithm:", LIME_GREEN)
+    magic_cube.display()
+    algorithms.append(
+        {
+            "algorithm": "Simulated Annealing Algorithm",
+            "initial_score": sim_initial_score,
+            "final_score": sim_final_score,
+            "delta": sim_initial_score - sim_final_score,
+            "duration": sim_duration,
+            "iteration": sim_iteration,
+            "stuck frequency": stuck_frequency
+        }
+    )
+
 def run_comparison_algorithms():
     # Perbandingan tiap algoritma
     best_algorithm_delta = max(algorithms, key=lambda algo: algo["delta"])
@@ -110,34 +184,44 @@ def run_comparison_algorithms():
     colorText(f"   • Durasi: {slowest_algorithm_duration['duration']:.4f} seconds", ORANGE)
 
 
-# Variabel global
-size = 5
-max_iterations = 1
-max_sideways_iteration = 10
-algorithms = []
-
 clear_screen()
 colorText("Welcome to the Magic Cube Solver!\n", GOLDEN_YELLOW)
 colorText("Pilihan algoritma yang tersedia:", TEAL)
-colorText("1. Steepest Hill Climbing", LIME_GREEN)
-colorText("2. Sideways Move Hill Climbing", LIME_GREEN)
-colorText("3. Stochastic Hill Climbing", LIME_GREEN)
-colorText("4. Semua Algoritma (Tambahan Info Perbandingan)", LIME_GREEN)
 
-choice = input(TEAL + "Masukkan algoritma yang ingin dicoba (1/2/3/4): " + RESET_COLOR)
+algo_names = ["Steepest Hill Climbing", "Sideways Move Hill Climbing", "Stochastic Hill Climbing", "Random Restart Hill Climbing", "Genetic Algorithm", "Simulated Annealing"]
+i = 1
+for algon in algo_names:
+    colorText(f"{i}. {algon}", LIME_GREEN)
+    i += 1
+
+colorText(f"{i}. Semua Algoritma (Tambahan Info Perbandingan)", LIME_GREEN)
+
+choice = input(TEAL + "Masukkan algoritma yang ingin dicoba (1/2/3/6/7): " + RESET_COLOR)
 
 # Pemilihan algoritma
-if "1" in choice or "4" in choice:
+if "1" in choice or "7" in choice:
     separator("Menjalankan Steepest Hill Climbing")
     run_steepest_hill_climbing()
 
-if "2" in choice or "4" in choice:
+if "2" in choice or "7" in choice:
     separator("Menjalankan Sideways Move Hill Climbing")
     run_sideways_move_hill_climbing()
 
-if "3" in choice or "4" in choice:
+if "3" in choice or "7" in choice:
     separator("Menjalankan Stochastic Hill Climbing")
     run_stochastic_hill_climbing()
+
+if "4" in choice or "7" in choice:
+    separator("Menjalankan Random Restart Hill Climbing")
+    run_random_restart()
+
+if "5" in choice or "7" in choice:
+    separator("Menjalankan Genetic Algorithm")
+    run_genetic_algorithm()
+
+if "6" in choice or "7" in choice:
+    separator("Menjalankan Simulated Annealing")
+    run_simulated_annealing()
 
 # Pemaparan informasi setiap algoritma
 separator("Informasi Algoritma Terpilih")
@@ -150,7 +234,11 @@ for algo in algorithms:
     colorText(f"   • Iterasi: {algo['iteration']}", ORANGE)
     if algo['algorithm'] == "Sideways Move Hill Climbing":
         colorText(f"   • Iterasi sideways terbanyak: {algo['most_sideways_iteration']}", ORANGE)
+    elif algo['algorithm'] == "Genetic Algorithm":
+        colorText(f"   • Populasi: {algo['population']}", ORANGE)
+    elif algo['algorithm'] == "Simulated Annealing":
+        colorText(f"   • Stuck Frequency: {algo['stuck_frequency']}", ORANGE)
 
 # Menampilkan informasi perbandingan jika 4 dipilih
-if "4" in choice:
+if "7" in choice:
     run_comparison_algorithms()
