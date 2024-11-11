@@ -79,6 +79,29 @@ def run_stochastic_hill_climbing():
         "iteration": stochastic_iteration
     })
 
+def run_genetic_algorithm():
+    magic_cube = MagicCube(size)
+    population_size = int(input("Enter Population Size: "))
+    iteration = int(input("Enter Number of Iterations: "))
+    genetic_algorithm = GeneticAlgorithmMagicCube(population_size=population_size, mutation_rate=0.1,
+                                                  iterations=iteration)
+    colorText("First state of magic cube:", LIME_GREEN)
+    magic_cube.display()
+    genetic_initial_score, genetic_final_score, duration = genetic_algorithm.run()
+    colorText("\nState of magic cube after Genetic Algorithm:", LIME_GREEN)
+    magic_cube.display()
+    print(f"Duration: {duration} seconds")
+    algorithms.append(
+        {
+            "algorithm": "Genetic Algorithm",
+            "initial_score": genetic_initial_score,
+            "final_score": genetic_final_score,
+            "delta": genetic_initial_score - genetic_final_score,
+            "duration": duration,
+            "iteration": iteration
+        }
+    )
+
 def run_comparison_algorithms():
     # Perbandingan tiap algoritma
     best_algorithm_delta = max(algorithms, key=lambda algo: algo["delta"])
@@ -114,22 +137,27 @@ print("Pilihan algoritma yang tersedia:")
 print("1. Steepest Hill Climbing")
 print("2. Sideways Move Hill Climbing")
 print("3. Stochastic Hill Climbing")
-print("4. Semua Algoritma (Tambahan Info Perbandingan)")
+print("6. Genetic Algorithm")
+print("7. Semua Algoritma (Tambahan Info Perbandingan)")
 
-choice = input("Masukkan algoritma yang ingin dicoba (1/2/3/4): ")
+choice = input("Masukkan algoritma yang ingin dicoba (1/2/3/6/7): ")
 
 # Pemilihan algoritma
-if "1" in choice or "4" in choice:
+if "1" in choice or "7" in choice:
     separator("Menjalankan Steepest Hill Climbing")
     run_steepest_hill_climbing()
 
-if "2" in choice or "4" in choice:
+if "2" in choice or "7" in choice:
     separator("Menjalankan Sideways Move Hill Climbing")
     run_sideways_move_hill_climbing()
 
-if "3" in choice or "4" in choice:
+if "3" in choice or "7" in choice:
     separator("Menjalankan Stochastic Hill Climbing")
     run_stochastic_hill_climbing()
+
+if "6" in choice or "7" in choice:
+    separator("Menjalankan Genetic Algorithm")
+    run_genetic_algorithm()
 
 # Pemaparan informasi setiap algoritma
 separator("Informasi Algoritma Terpilih")
@@ -142,7 +170,9 @@ for algo in algorithms:
     colorText(f"   • Iterasi: {algo['iteration']}", ORANGE)
     if algo['algorithm'] == "Sideways Move Hill Climbing":
         colorText(f"   • Iterasi sideways terbanyak: {algo['most_sideways_iteration']}", ORANGE)
+    if algo['algorithm'] == "Genetic Algorithm":
+        colorText(f"   • Durasi algoritma: {algo['duration']}", ORANGE)
 
-# Menampilkan informasi perbandingan jika 4 dipilih
-if "4" in choice:
+# Menampilkan informasi perbandingan jika 7 dipilih
+if "7" in choice:
     run_comparison_algorithms()
