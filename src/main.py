@@ -1,10 +1,10 @@
 import sys
 import time
-import matplotlib.pyplot as plt
 from cube.magic_cube import MagicCube
 from algorithms.steepest_hill_climbing import SteepestHillClimbing
 from algorithms.sideways_move import SidewaysMove
 from algorithms.stochastic import StochasticHillClimbing
+from algorithms.genetic_algorithm import GeneticAlgorithmMagicCube
 
 # Pendefinisian warna
 LIME_GREEN = "\033[38;5;149m"
@@ -103,7 +103,6 @@ def run_comparison_algorithms():
     separator("Algoritma dengan perkembangan paling lambat")
     colorText(f"\n🔹 Algoritma: {slowest_algorithm_duration['algorithm']}", GOLDEN_YELLOW)
     colorText(f"   • Duration: {slowest_algorithm_duration['duration']:.4f} seconds", ORANGE)
-
 
 # Variabel global
 size = 5
