@@ -1,25 +1,25 @@
 # A Diagonal Magic Cube Local Search Solver
 
 ## Deskripsi Singkat
-<p align="justify"> Proyek ini mengimplementasikan berbagai algoritma _local search_ untuk menyelesaikan masalah _Diagonal Magic Cube_, di mana tujuannya adalah mengatur angka-angka dalam kubus 5x5x5 sehingga setiap baris, kolom, pilar, dan diagonal memiliki jumlah yang sama dengan _magic number_. Solusi yang dihasilkan bertujuan meminimalkan selisih dari _magic number_ pada seluruh komponen kubus, sehingga tercapai susunan optimal.
+<p align="justify"> Proyek ini mengimplementasikan berbagai algoritma local search untuk menyelesaikan masalah Diagonal Magic Cube, di mana tujuannya adalah mengatur angka-angka dalam kubus 5x5x5 sehingga setiap baris, kolom, pilar, dan diagonal memiliki jumlah yang sama dengan magic number. Solusi yang dihasilkan bertujuan meminimalkan selisih dari magic number pada seluruh komponen kubus, sehingga tercapai susunan optimal.
 
 ## Algoritma
-Algoritma local search berikut kami implementasikan:
-1. **Steepest Ascent Hill-Climbing**  
+Berikut merupakan algoritma _local search_ yang implementasikan.
+1. _**Steepest Ascent Hill-Climbing**_  
    Bergerak menuju tetangga dengan perbaikan tertinggi hingga mencapai titik maksimum lokal.
-2. **Hill-Climbing dengan Sideways Move**  
+2. _**Hill-Climbing dengan Sideways Move**_  
    Mirip dengan steepest ascent, tetapi memungkinkan perpindahan lateral ketika tidak ada perbaikan langsung, untuk menghindari lokal maksimum.
-3. **Random Restart Hill-Climbing**  
+3. _**Random Restart Hill-Climbing**_  
    Melakukan restart dengan kondisi awal acak untuk meningkatkan peluang menemukan solusi optimal global.
-4. **Stochastic Hill-Climbing**  
+4. _**Stochastic Hill-Climbing**_  
    Memilih tetangga secara acak, memungkinkan eksplorasi solusi yang lebih luas.
-5. **Simulated Annealing**  
+5. _**Simulated Annealing**_  
    Menggunakan pendekatan berbasis probabilitas untuk menerima solusi yang lebih buruk sesekali, sehingga mengurangi risiko terjebak di lokal maksimum.
-6. **Genetic Algorithm**  
+6. _**Genetic Algorithm**_  
    Menggunakan seleksi, crossover, dan mutasi untuk mengembangkan populasi solusi menuju susunan optimal.
 
 ## Fungsi Objektif
-<p align="justify"> Fungsi objektif mengevaluasi setiap keadaan kubus dengan menghitung selisih antara komponen kubus dan _magic number_. Nilai yang lebih rendah menunjukkan solusi yang lebih dekat dengan susunan optimal.
+<p align="justify"> Fungsi objektif mengevaluasi setiap keadaan kubus dengan menghitung selisih antara komponen kubus dan magic number. Nilai yang lebih rendah menunjukkan solusi yang lebih dekat dengan susunan optimal.
 
 ## Cara Kompilasi Program
 1. Clone repository github dan cd ke folder src
