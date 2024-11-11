@@ -1,270 +1,125 @@
-import math
 import random
-import copy
+import math
 import time
 import matplotlib.pyplot as plt
 
+
 class SimulatedAnnealing:
-    def __init__(self, initial_state, initial_temp, cooling_rate, min_temp):
-        self.current_state = initial_state
-        self.current_score = self.objective_function(self.current_state)
-        self.best_state = copy.deepcopy(self.current_state)
-        self.best_score = self.current_score
-        self.temperature = initial_temp
+    def __init__(self, cube, initial_temperature=1000, final_temperature=0.1, cooling_rate=0.99, threshold=0.5):
+        """
+        Menginisialisasi algoritma Simulated Annealing dengan parameter yang diberikan.
+
+        Parameters:
+        - cube: Objek MagicCube yang akan dioptimalkan
+        - initial_temperature: Suhu awal untuk memulai proses
+        - final_temperature: Suhu akhir yang menentukan kapan algoritma berhenti
+        - cooling_rate: Laju penurunan suhu per iterasi
+        - threshold: batas probabilitas penerimaan solusi yang lebih buruk
+        """
+        self.cube = cube
+        self.initial_temperature = initial_temperature
+        self.final_temperature = final_temperature
         self.cooling_rate = cooling_rate
-        self.min_temp = min_temp
-        self.scores = []           # Track scores at each accepted move
-        self.temperatures = []      # Track temperature (move threshold) over time
-        self.stuck_count = 0        # Count of stuck states
+        self.threshold = threshold
+        self.scores = []
+        self.acceptance_probability = []
+        self.stuck_frequency = 0
 
-    def objective_function(self, state):
-        # Replace this with the actual objective function for your problem
-        return sum(state)  # Example objective function (sum of elements in state)
+    def swap_elements(self, pos1, pos2):
+        """
+        Menukar dua elemen pada posisi 1 dan 2 dalam kubus.
 
-    def get_neighbor(self, state):
-        # Define how to generate a neighboring state
-        neighbor = copy.deepcopy(state)
-        index = random.randint(0, len(state) - 1)
-        neighbor[index] += random.choice([-1, 1])  # Small random change
-        return neighbor
+        Parameters:
+        - pos1, pos2: Posisi dari elemen yang akan ditukar dalam bentuk koordinat (x, y, z)
+        """
+        x1, y1, z1 = pos1
+        x2, y2, z2 = pos2
+        self.cube.cube[x1][y1][z1], self.cube.cube[x2][y2][z2] = self.cube.cube[x2][y2][z2], self.cube.cube[x1][y1][z1]
 
-    def accept_probability(self, delta, temperature):
-        # Calculate acceptance probability
-        return math.exp(-delta / temperature)
+    def find_random_neighbor(self):
+        """
+        Menemukan tetangga acak dengan menukar dua elemen dalam kubus secara acak.
+
+        Returns:
+        - pos1, pos2: Posisi elemen yang ditukar
+        """
+        pos1 = (random.randint(0, self.cube.size - 1), random.randint(0, self.cube.size - 1),
+                random.randint(0, self.cube.size - 1))
+        pos2 = (random.randint(0, self.cube.size - 1), random.randint(0, self.cube.size - 1),
+                random.randint(0, self.cube.size - 1))
+        while pos1 == pos2:
+            pos2 = (random.randint(0, self.cube.size - 1), random.randint(0, self.cube.size - 1),
+                    random.randint(0, self.cube.size - 1))  # Memastikan dua posisi yang dipilih berbeda
+
+        # Menukar elemen di kedua posisi tersebut
+        self.swap_elements(pos1, pos2)
+        return pos1, pos2
 
     def run(self):
         start_time = time.perf_counter()
+        temperature = self.initial_temperature
+        self.best_score = self.cube.objective_function()
+        current_value = self.best_score
+
         iteration = 0
 
-        while self.temperature > self.min_temp:
-            # Track the temperature and current score at each iteration
-            self.temperatures.append(self.temperature)
-            self.scores.append(self.current_score)
+        # List untuk menyimpan probabilitas penerimaan solusi buruk
+        acc_probability_list = []
 
-            # Generate a neighboring state
-            neighbor_state = self.get_neighbor(self.current_state)
-            neighbor_score = self.objective_function(neighbor_state)
-            delta = neighbor_score - self.current_score
+        # Berhenti saat temperature mencapai final_temperature
+        while temperature > self.final_temperature:
+            pos1, pos2 = self.find_random_neighbor()
+            neighbor_value = self.cube.objective_function()
+            delta = current_value - neighbor_value
 
-            # Determine if we should accept the neighbor state
-            if delta < 0 or random.random() < self.accept_probability(delta, self.temperature):
-                # Move to the neighbor state if accepted
-                self.current_state = neighbor_state
-                self.current_score = neighbor_score
-                if self.current_score < self.best_score:
-                    self.best_state = copy.deepcopy(self.current_state)
-                    self.best_score = self.current_score
+            # Jika solusi baru lebih buruk
+            if delta < 0:
+                acceptance_probability = math.exp(delta / temperature)  # Hitung probabilitas penerimaan solusi buruk
+                acc_probability_list.append(acceptance_probability)
+
+                # Menerima solusi buruk jika probabilitasnya lebih besar dari threshold
+                if self.threshold < acceptance_probability:
+                    current_value = neighbor_value
+
+                # Solusi yang buruk tidak diambil jika probabilitasnya tidak lebih besar dari threshold
+                else:
+                    self.swap_elements(pos1,
+                                       pos2)  # Menukar kembali kedua elemen di posisi tersebut: posisi elemen tidak jadi berubah
+                    self.stuck_frequency += 1  # Jumlah stuck di local optima bertambah
+
+            # Jika solusi baru lebih baik, maka langsung diterima tanpa syarat
             else:
-                # Increment stuck count if no improvement
-                self.stuck_count += 1
+                current_value = neighbor_value
+                acc_probability_list.append(1)  # Probabilitas penerimaannya adalah 1
 
-            # Cool down the temperature
-            self.temperature *= self.cooling_rate
+            self.scores.append(current_value)
+
+            # Suhu berkurang berdasarkan cooling_rate
+            temperature *= self.cooling_rate
             iteration += 1
+
+        # Memperbarui best_score dengan nilai solusi saat ini jika solusi ini lebih baik daripada yang sebelumnya
+        self.best_score = current_value
 
         end_time = time.perf_counter()
         duration = end_time - start_time
 
-        # Final score tracking for plot consistency
-        self.scores.append(self.current_score)
-        self.temperatures.append(self.temperature)
-
-        return self.best_state, self.best_score, duration, iteration, self.stuck_count
-
-    def plot_progress(self, iteration):
-        plt.figure(figsize=(12, 6))
-
-        # Plot Objective Function Value
-        plt.plot(range(iteration + 1), self.scores, marker='o', color='b', label="Objective Function Value")
-
-        # Plot Move Threshold (Temperature)
-        plt.plot(range(iteration + 1), self.temperatures, color='r', linestyle='--', label="Move Threshold (Temperature)")
-
-        # Set x-axis ticks
-        plt.xticks(range(0, iteration + 1, 1))
-        plt.title("Simulated Annealing Progression")
+        # Plot perkembangan nilai objective function
+        plt.figure(figsize=(10, 6))
+        plt.plot(self.scores, label="Objective Function Value", alpha=0.5)
         plt.xlabel("Iteration")
-        plt.ylabel("Value")
+        plt.ylabel("Objective Function")
+        plt.title("Objective Function")
         plt.legend()
-        plt.grid(True)
         plt.show()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# import sys
-# import time
-# import random
-# import matplotlib.pyplot as plt
-# from cube.magic_cube import MagicCube
-# from algorithms.steepest_hill_climbing import SteepestHillClimbing
-# from algorithms.sideways_move import SidewaysMove
-# from algorithms.stochastic import StochasticHillClimbing
-# from algorithms.simulated_annealing import SimulatedAnnealing
-
-# size = 5
-# max_iterations = 1000
-# max_sideways_iteration = 5
-# initial_temp = 100.0
-# cooling_rate = 0.95
-# min_temp = 1e-3
-
-# algorithms = []
-
-# # print("\n=== Running Steepest Hill Climbing ===")
-# # magic_cube = MagicCube(size)
-# # steepest_initial_score = magic_cube.objective_function()
-# # print("First state of magic cube:")
-# # magic_cube.display()
-# # steepest_hill = SteepestHillClimbing(magic_cube)
-# # steepest_final_score, steepest_move_duration, steepest_move_iteration = steepest_hill.run(max_iterations)
-# # print("\nState of magic cube after Steepest Hill Climbing:")
-# # magic_cube.display()
-# # algorithms.append(
-# #     {
-# #         "algorithm": "Steepest Hill Climbing",
-# #         "initial_score": steepest_initial_score,
-# #         "final_score": steepest_final_score,
-# #         "delta": steepest_initial_score - steepest_final_score,
-# #         "duration": steepest_move_duration,
-# #         "iteration": steepest_move_iteration
-# #     }
-# # )
-
-# # print("\n=== Running Sideways Move Hill Climbing ===")
-# # magic_cube = MagicCube(size)
-# # sideways_initial_score = magic_cube.objective_function()
-# # print("First state of magic cube:")
-# # magic_cube.display()
-# # sideways_climber = SidewaysMove(magic_cube)
-# # sideways_final_score, sideways_move_duration, sideways_move_iteration = sideways_climber.run(max_iterations, max_sideways_iteration)
-# # print("\nState of magic cube after Sideways Move Hill Climbing:")
-# # magic_cube.display()
-# # algorithms.append(
-# #     {
-# #         "algorithm": "Sideways Move Hill Climbing",
-# #         "initial_score": sideways_initial_score,
-# #         "final_score": sideways_final_score,
-# #         "delta": sideways_initial_score - sideways_final_score,
-# #         "duration": sideways_move_duration,
-# #         "iteration": sideways_move_iteration
-# #     }
-# # )
-
-# # print("\n=== Running Stochastic Hill Climbing ===")
-# # magic_cube = MagicCube(size)
-# # stochastic_initial_score = magic_cube.objective_function()
-# # print("First state of magic cube:")
-# # magic_cube.display()
-# # stochastic_climber = StochasticHillClimbing(magic_cube)
-# # stochastic_final_score, stochastic_duration, stochastic_iteration = stochastic_climber.run(max_iterations)
-# # print("\nState of magic cube after Stochastic Hill Climbing:")
-# # magic_cube.display()
-# # algorithms.append(
-# #     {
-# #         "algorithm": "Stochastic Hill Climbing",
-# #         "initial_score": stochastic_initial_score,
-# #         "final_score": stochastic_final_score,
-# #         "delta": stochastic_initial_score - stochastic_final_score,
-# #         "duration": stochastic_duration,
-# #         "iteration": stochastic_iteration
-# #     }
-# # )
-
-# print("\n=== Running Simulated Annealing ===")
-# initial_state = [random.randint(1, 100) for _ in range(size)]  
-# simulated_annealing = SimulatedAnnealing(initial_state, initial_temp, cooling_rate, min_temp)
-# best_state, simulated_final_score, simulated_duration, simulated_iteration, stuck_count = simulated_annealing.run()  # Adjusted unpacking to five values
-# simulated_initial_score = simulated_annealing.objective_function(initial_state)
-# print("\nFinal state after Simulated Annealing:", best_state)
-# algorithms.append(
-#     {
-#         "algorithm": "Simulated Annealing",
-#         "initial_score": simulated_initial_score,
-#         "final_score": simulated_final_score,
-#         "delta": simulated_initial_score - simulated_final_score,
-#         "duration": simulated_duration,
-#         "iteration": simulated_iteration
-#     }
-# )
-
-# best_algorithm_delta = max(algorithms, key=lambda algo: algo["delta"])
-# best_algorithm_duration = min(algorithms, key=lambda algo: algo["duration"])
-
-# print("\n=== Comparison of Algorithm Improvements ===")
-# for algo in algorithms:
-#     print(f"\nAlgorithm: {algo['algorithm']}")
-#     print(f"Initial Score: {algo['initial_score']}")
-#     print(f"Final Score: {algo['final_score']}")
-#     print(f"Delta: {algo['delta']}")
-#     print(f"Duration: {algo['duration']:.4f} seconds")
-#     print(f"Iteration: {algo['iteration']}")
-
-# print("\n" + "-" * 50)
-
-# print("\n=== Algorithm with the Largest Improvement ===")
-# print(f"Algorithm: {best_algorithm_delta['algorithm']}")
-# print(f"Delta: {best_algorithm_delta['delta']}")
-# print(f"Final Score: {best_algorithm_delta['final_score']}")
-
-# print("\n=== Algorithm with the Fastest Duration ===")
-# print(f"Algorithm: {best_algorithm_duration['algorithm']}")
-# print(f"Duration: {best_algorithm_duration['duration']:.4f} seconds")
+        # Plot probabilitas penerimaan solusi buruk
+        plt.figure(figsize=(10, 6))
+        plt.plot(acc_probability_list, label="Acceptance Probability", alpha=0.5)
+        plt.xlabel("Iterations")
+        plt.ylabel("Acceptance Probability")
+        plt.title("Acceptance Probability Over Iterations")
+        plt.legend(loc="upper right")  # Memindahkan legend ke ujung kanan atas
+        plt.show()
+
+        return self.best_score, duration, self.stuck_frequency, iteration
