@@ -5,9 +5,9 @@ from cube.magic_cube import MagicCube
 #Class untuk Random Restart Hill Climbing
 class RandomRestartHillClimbing:
     #Memulai tahap inisialisasi
-    def __init__(self, cube, max_restarts, max_iterations_per_restart):
+    def __init__(self, cube, max_restart, max_iterations_per_restart):
         self.cube = cube 
-        self.max_restarts = max_restarts
+        self.max_restart = max_restart
         self.max_iterations_per_restart = max_iterations_per_restart
         self.scores = [] #menyimpan objective score setiap iterasi
     
@@ -66,7 +66,6 @@ class RandomRestartHillClimbing:
         last_best_delta = 0
         best_score = self.cube.objective_function()
         scores = []
-        print(f"Initial score: {best_score}")
 
         while iteration < max_iterations:
             best_positions, best_delta = self.find_best_neighbor()
@@ -79,26 +78,23 @@ class RandomRestartHillClimbing:
             best_score -= best_delta #Melakukan update untuk skor terbaik
             iteration += 1
             scores.append(best_score)
-            print(f"Iteration {iteration}, New score: {best_score}")
 
         final_score = self.cube.objective_function()
-        print(f"Final score after hill climbing: {final_score}")
         return final_score, iteration, scores
+
     #Fungsi Random Restart Hill Climbing
-    def run(self):
+    def run(self, initial_score):
         start_time = time.perf_counter() #Pencatatan waktu
-        best_solution_score = 0 #Inisialisasi skor terbaik
+        best_solution_score = initial_score #Inisialisasi skor terbaik
         total_iterations = 0 #Inisialisasi total iterasi
         number_restart = 0 #Perhitungan terhadap restart
             
-        while number_restart < self.max_restarts:
-            print(f"\n=== Restart {number_restart + 1} ===")
+        while number_restart < self.max_restart:
             obj_scores = [] #Nilai objektif akan dicatat setiap dilakukan restart
 
             #Melakukan pengacakan untuk setiap restart 
             self.randomize_cube()
             randomized_score = self.cube.objective_function()
-            print(f"Score after randomization: {randomized_score}")
             #Memanggil dan menjalankan fungsi steepest hill climbing setiap restart dilakukan
             final_score, iteration, obj_scores = self.run_steepest_hill_climbing(self.max_iterations_per_restart)
 
@@ -112,7 +108,6 @@ class RandomRestartHillClimbing:
             total_iterations += iteration #Menambahkan iterasi ke total iterasi
             number_restart += 1  #Menambah jumlah restart
 
-            print(f"Objective score after restart {number_restart}: {final_score}")
             plt.close() #Menutup plot yang sebelumnya terbuka 
 
         end_time = time.perf_counter()
