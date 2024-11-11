@@ -1,4 +1,4 @@
-=== Running Steepest Hill Climbing ===")
+
 # magic_cube = MagicCube(size)
 # steepest_initial_score = magic_cube.objective_function()
 # print("\nFirst state of magic cube:")

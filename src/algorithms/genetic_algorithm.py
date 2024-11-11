@@ -1,7 +1,7 @@
 import random
 from typing import List
 from cube.magic_cube import MagicCube
-from cube.obj_function import ObjectiveFunction
+
 
 class GeneticAlgorithmMagicCube:
     def __init__(self, population_size=50, mutation_rate=0.1, generations=200, best_individuals=2, restart_interval=50):
