@@ -183,7 +183,6 @@ def run_comparison_algorithms():
     colorText(f"\n🔹 Algoritma: {slowest_algorithm_duration['algorithm']}", GOLDEN_YELLOW)
     colorText(f"   • Durasi: {slowest_algorithm_duration['duration']:.4f} seconds", ORANGE)
 
-
 clear_screen()
 colorText("Welcome to the Magic Cube Solver!\n", GOLDEN_YELLOW)
 colorText("Pilihan algoritma yang tersedia:", TEAL)
@@ -231,6 +230,9 @@ for algo in algorithms:
     colorText(f"   • Skor final: {algo['final_score']}", ORANGE)
     colorText(f"   • Delta: {algo['delta']}", ORANGE)
     colorText(f"   • Durasi: {algo['duration']:.4f} seconds", ORANGE)
+    if algo['algorithm'] == "Genetic Algorithm":
+        colorText(f"   • Populasi: {algo['population']}", ORANGE)
+
     colorText(f"   • Iterasi: {algo['iteration']}", ORANGE)
     if algo['algorithm'] == "Sideways Move Hill Climbing":
         colorText(f"   • Iterasi sideways terbanyak: {algo['most_sideways_iteration']}", ORANGE)
