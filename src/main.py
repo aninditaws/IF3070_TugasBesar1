@@ -1,10 +1,15 @@
 import sys
+import os
 import time
 import matplotlib.pyplot as plt
 from cube.magic_cube import MagicCube
 from algorithms.steepest_hill_climbing import SteepestHillClimbing
 from algorithms.sideways_move import SidewaysMove
 from algorithms.stochastic import StochasticHillClimbing
+
+# Mengosongkan terminal
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 # Pendefinisian warna
 LIME_GREEN = "\033[38;5;149m"
@@ -89,20 +94,20 @@ def run_comparison_algorithms():
     separator("Algoritma dengan perkembangan paling besar")
     colorText(f"\n🔹 Algoritma: {best_algorithm_delta['algorithm']}", GOLDEN_YELLOW)
     colorText(f"   • Delta: {best_algorithm_delta['delta']}", ORANGE)
-    colorText(f"   • Final Score: {best_algorithm_delta['final_score']}", ORANGE)
+    colorText(f"   • Skor Final: {best_algorithm_delta['final_score']}", ORANGE)
 
     separator("Algoritma dengan perkembangan paling kecil")
     colorText(f"\n🔹 Algoritma: {worst_algorithm_delta['algorithm']}", GOLDEN_YELLOW)
     colorText(f"   • Delta: {worst_algorithm_delta['delta']}", ORANGE)
-    colorText(f"   • Final Score: {worst_algorithm_delta['final_score']}", ORANGE)
+    colorText(f"   • Skor Final: {worst_algorithm_delta['final_score']}", ORANGE)
 
     separator("Algoritma dengan perkembangan paling cepat")
     colorText(f"\n🔹 Algoritma: {fastest_algorithm_duration['algorithm']}", GOLDEN_YELLOW)
-    colorText(f"   • Duration: {fastest_algorithm_duration['duration']:.4f} seconds", ORANGE)
+    colorText(f"   • Durasi: {fastest_algorithm_duration['duration']:.4f} seconds", ORANGE)
 
     separator("Algoritma dengan perkembangan paling lambat")
     colorText(f"\n🔹 Algoritma: {slowest_algorithm_duration['algorithm']}", GOLDEN_YELLOW)
-    colorText(f"   • Duration: {slowest_algorithm_duration['duration']:.4f} seconds", ORANGE)
+    colorText(f"   • Durasi: {slowest_algorithm_duration['duration']:.4f} seconds", ORANGE)
 
 
 # Variabel global
@@ -111,13 +116,15 @@ max_iterations = 1
 max_sideways_iteration = 10
 algorithms = []
 
-print("Pilihan algoritma yang tersedia:")
-print("1. Steepest Hill Climbing")
-print("2. Sideways Move Hill Climbing")
-print("3. Stochastic Hill Climbing")
-print("4. Semua Algoritma (Tambahan Info Perbandingan)")
+clear_screen()
+colorText("Welcome to the Magic Cube Solver!\n", GOLDEN_YELLOW)
+colorText("Pilihan algoritma yang tersedia:", TEAL)
+colorText("1. Steepest Hill Climbing", LIME_GREEN)
+colorText("2. Sideways Move Hill Climbing", LIME_GREEN)
+colorText("3. Stochastic Hill Climbing", LIME_GREEN)
+colorText("4. Semua Algoritma (Tambahan Info Perbandingan)", LIME_GREEN)
 
-choice = input("Masukkan algoritma yang ingin dicoba (1/2/3/4): ")
+choice = input(TEAL + "Masukkan algoritma yang ingin dicoba (1/2/3/4): " + RESET_COLOR)
 
 # Pemilihan algoritma
 if "1" in choice or "4" in choice:
