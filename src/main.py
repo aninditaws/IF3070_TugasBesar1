@@ -90,7 +90,6 @@ def run_genetic_algorithm():
     genetic_initial_score, genetic_final_score, duration = genetic_algorithm.run()
     colorText("\nState of magic cube after Genetic Algorithm:", LIME_GREEN)
     magic_cube.display()
-    print(f"Duration: {duration} seconds")
     algorithms.append(
         {
             "algorithm": "Genetic Algorithm",
@@ -98,6 +97,7 @@ def run_genetic_algorithm():
             "final_score": genetic_final_score,
             "delta": genetic_initial_score - genetic_final_score,
             "duration": duration,
+            "population": population_size,
             "iteration": iteration
         }
     )
@@ -167,11 +167,12 @@ for algo in algorithms:
     colorText(f"   • Skor final: {algo['final_score']}", ORANGE)
     colorText(f"   • Delta: {algo['delta']}", ORANGE)
     colorText(f"   • Durasi: {algo['duration']:.4f} seconds", ORANGE)
+    if algo['algorithm'] == "Genetic Algorithm":
+        colorText(f"   • Populasi: {algo['population']}", ORANGE)
+
     colorText(f"   • Iterasi: {algo['iteration']}", ORANGE)
     if algo['algorithm'] == "Sideways Move Hill Climbing":
         colorText(f"   • Iterasi sideways terbanyak: {algo['most_sideways_iteration']}", ORANGE)
-    if algo['algorithm'] == "Genetic Algorithm":
-        colorText(f"   • Durasi algoritma: {algo['duration']}", ORANGE)
 
 # Menampilkan informasi perbandingan jika 7 dipilih
 if "7" in choice:
